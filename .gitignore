@@ -1,0 +1,6 @@
+*.a
+*.so
+*.o
+*.pyc
+usbdmx_example
+usbdmx_example_static
