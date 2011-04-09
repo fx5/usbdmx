@@ -1,11 +1,12 @@
 all:  usbdmx_example usbdmx_example_static
+	head -n 10 README.txt
 
 CC=gcc
 CXX=g++
 COBJS=hid.o usbdmx.o
 CPPOBJS=
 OBJS=$(COBJS) $(CPPOBJS)
-CFLAGS+=-Wall -g -c -fpic
+CFLAGS+=-Wall -g -c -fpic -pthread
 LIBS=`pkg-config libudev --libs`
 
 usbdmx_example: libusbdmx.so libusbdmx.a

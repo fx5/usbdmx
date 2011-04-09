@@ -2,10 +2,16 @@ usbdmx - Linux-Driver for usb-dmx-Interface from Digital Enlightment and FX5
 
 Should be more or less api-compatible with the original Windows-Driver. BSD-License.
 
-Based upon hidapi from Alan Ott which is released under several licenses.
+To use the inerface without root-privileges:
+# cp 50-usbdmx.rules /etc/udev/rules.d/
 
-Copyright (c) 2010, Frank Sievertsen
+To use the non-static-version "usbdmx_example":
+$ LD_LIBRARY_PATH=. ./usbdmx_example
+
+Copyright (c) 2011, Frank Sievertsen
 All rights reserved.
+
+Based upon hidapi Copyright (c) 2010 Alan Ott.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
