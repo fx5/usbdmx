@@ -2,7 +2,7 @@ usbdmx - Linux-Driver for usb-dmx-Interface from Digital Enlightment and FX5
 
 Should be more or less api-compatible with the original Windows-Driver. BSD-License.
 
-To use the inerface without root-privileges:
+To use the interface without root-privileges:
 # cp 50-usbdmx.rules /etc/udev/rules.d/
 
 To use the non-static-version "usbdmx_example":
