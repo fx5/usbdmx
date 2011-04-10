@@ -51,8 +51,8 @@ typedef struct  {
     TDMXArray * dmx_in;
     TDMXArray * dmx_out;
     TDMXArray dmx_cmp;
-    volatile int status;
-    volatile unsigned char mode;
+    volatile sig_atomic_t status;
+    volatile sig_atomic_t mode;
     volatile unsigned char old_mode;
 } device_t;
 
