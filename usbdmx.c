@@ -120,8 +120,8 @@ void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
         ) {
             wserial_to_serial(cur_dev->serial_number, SerialList[0][pos]);
             pos ++;
-            cur_dev = cur_dev->next;
         }
+        cur_dev = cur_dev->next;
     }
     hid_free_enumeration(devs);
     wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
@@ -146,8 +146,8 @@ DWORD GetDeviceVersion(TSERIAL Serial) {
             if(memcmp(Serial,serial_test,16)==0) {
                 res = cur_dev->release_number;
             }
-            cur_dev = cur_dev->next;
         }
+        cur_dev = cur_dev->next;
     }
 
     hid_free_enumeration(devs);
@@ -191,6 +191,7 @@ void *read_write_thread(void *pointer)
     int i;
     int res;
     int changed;
+    int first_time = 1;
     THOSTDEVICECHANGEPROC * tmp;
     THOSTINPUTCHANGEPROCBLOCK * tmp2;
 
@@ -207,7 +208,7 @@ void *read_write_thread(void *pointer)
         }
         if(device->dmx_out) {
             for(i=0; i<16; i++) {
-                if(memcmp(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32) != 0) {
+                if(first_time || (memcmp(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32) != 0)) {
                     memcpy(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32);
                     memcpy(buffer + 2, device->dmx_cmp + (i * 32), 32);
                     buffer[0] = 0;
@@ -240,6 +241,7 @@ void *read_write_thread(void *pointer)
                 (*tmp)();
             }
         }
+        first_time = 0;
         usleep(10000);
     }
     device->status = THREAD_STATUS_STOPPED;
