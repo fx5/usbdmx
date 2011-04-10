@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
   // (In this example simply the first interface of the list returned from "GetAllConnectedInterfaces" is opened without testing if there is connected any interface to the PC)
   printf("SERIAL: %s\n", InterfaceList[0]);
 
+  printf("VERSION: %d\n", GetDeviceVersion(InterfaceList[0]));
+
   memset(DMX_In,0,sizeof(TDMXArray));
   memset(DMX_Out,0,sizeof(TDMXArray));
 

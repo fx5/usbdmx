@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010, Frank Sievertsen
+Copyright (c) 2011, Frank Sievertsen
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@ modification, are permitted provided that the following conditions are met:
     * Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    * Neither the name of Signal 11 Software nor the names of its
+    * Neither the name of FX5 nor the names of its
       contributors may be used to endorse or promote products derived from
       this software without specific prior written permission.
 
@@ -38,6 +38,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #define MAX_OPENED 32
 
+#define THREAD_STATUS_RUN 0
+#define THREAD_STATUS_STOP 1
+#define THREAD_STATUS_STOPPED 2
+#define THREAD_STATUS_PAUSE 3
+#define THREAD_STATUS_PAUSED 4
+
 typedef struct  {
     TSERIAL serial;
     hid_device * handle;
@@ -45,7 +51,7 @@ typedef struct  {
     TDMXArray * dmx_in;
     TDMXArray * dmx_out;
     TDMXArray dmx_cmp;
-    volatile int stop;
+    volatile int status;
     volatile unsigned char mode;
     volatile unsigned char old_mode;
 } device_t;
@@ -81,6 +87,7 @@ void set_mode(hid_device * handle, unsigned char mode) {
 }
 
 THOSTDEVICECHANGEPROC * callback_func;
+THOSTINPUTCHANGEPROCBLOCK * callback_func_block;
 
 char NO_DEV[] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
@@ -116,7 +123,36 @@ void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
             cur_dev = cur_dev->next;
         }
     }
+    hid_free_enumeration(devs);
     wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
+}
+
+DWORD GetDeviceVersion(TSERIAL Serial) {
+    struct hid_device_info *devs, *cur_dev;
+    DWORD res = 0;
+
+    char serial_test[17];
+
+    devs = hid_enumerate(0x0, 0x0);
+
+    cur_dev = devs;
+
+    while (cur_dev) {
+        if(
+            ((cur_dev->vendor_id == DMX_INTERFACE_VENDOR_ID)&&(cur_dev->product_id == DMX_INTERFACE_PRODUCT_ID)) ||
+            ((cur_dev->vendor_id == DMX_INTERFACE_VENDOR_ID_2)&&(cur_dev->product_id == DMX_INTERFACE_PRODUCT_ID_2))
+        ) {
+            wserial_to_serial(cur_dev->serial_number, serial_test);
+            if(memcmp(Serial,serial_test,16)==0) {
+                res = cur_dev->release_number;
+            }
+            cur_dev = cur_dev->next;
+        }
+    }
+
+    hid_free_enumeration(devs);
+
+    return res;
 }
 
 void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
@@ -156,8 +192,15 @@ void *read_write_thread(void *pointer)
     int res;
     int changed;
     THOSTDEVICECHANGEPROC * tmp;
+    THOSTINPUTCHANGEPROCBLOCK * tmp2;
 
-    while(!device->stop) {
+    while(device->status != THREAD_STATUS_STOP) {
+        if (device->status == THREAD_STATUS_PAUSE) {
+            device->status = THREAD_STATUS_PAUSED;
+            while(device->status == THREAD_STATUS_PAUSED) {
+                usleep(10000);
+            }
+        }
         if(device->old_mode != device->mode) {
             device->old_mode = device->mode;
             set_mode(device->handle, device->old_mode);
@@ -167,8 +210,8 @@ void *read_write_thread(void *pointer)
                 if(memcmp(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32) != 0) {
                     memcpy(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32);
                     memcpy(buffer + 2, device->dmx_cmp + (i * 32), 32);
-                    buffer[1] = i;
                     buffer[0] = 0;
+                    buffer[1] = i;
                     res = hid_write(device->handle, buffer, 34);
                 }
             }
@@ -186,6 +229,10 @@ void *read_write_thread(void *pointer)
                 if(size == 33) {
                     memcpy(device->dmx_in[0]+buffer[0]*32, buffer+1, 32);
                     changed = 1;
+                    tmp2 = callback_func_block;
+                    if(tmp2) {
+                        (*tmp2)(buffer[0]);
+                    }
                 }
             }
             tmp = callback_func;
@@ -195,7 +242,7 @@ void *read_write_thread(void *pointer)
         }
         usleep(10000);
     }
-    device->stop = 2;
+    device->status = THREAD_STATUS_STOPPED;
 
     return NULL;
 }
@@ -244,8 +291,8 @@ DWORD CloseLink (TSERIAL Serial) {
     if(pos == -1) {
         return 0;
     }
-    open_devices[pos].stop = 1;
-    while(open_devices[pos].stop != 2) {
+    open_devices[pos].status = THREAD_STATUS_STOP;
+    while(open_devices[pos].status != THREAD_STATUS_STOPPED) {
         usleep(10000);
     }
     hid_close(open_devices[pos].handle);
@@ -286,3 +333,121 @@ DWORD UnregisterInputChangeNotification (void) {
     return 1;
 }
 
+DWORD SetInterfaceAdvTxConfig(
+    TSERIAL Serial, unsigned char Control, uint16_t Breaktime, uint16_t Marktime,
+    uint16_t Interbytetime, uint16_t Interframetime, uint16_t Channelcount, uint16_t Startbyte
+) {
+    int pos;
+    unsigned char buffer[35];
+
+    pos = find_dev(Serial);
+    if (pos == -1) {
+        return 0;
+    }
+
+    if (Channelcount > 512) Channelcount = 512;
+
+    open_devices[pos].status = THREAD_STATUS_PAUSE;
+
+    while (open_devices[pos].status != THREAD_STATUS_PAUSED) {
+        usleep(10000);
+    }
+
+    memset(buffer, 0, 34);
+    buffer[0] = 0;
+    buffer[1] = 17;
+    buffer[2] = Control;
+    buffer[3] = Breaktime & 255;
+    buffer[4] = (Breaktime >> 8) & 255;
+    buffer[5] = Marktime & 255;
+    buffer[6] = (Marktime >> 8) & 255;
+    buffer[7] = Interbytetime & 255;
+    buffer[8] = (Interbytetime >> 8) & 255;
+    buffer[9] = Interframetime & 255;
+    buffer[10] = (Interframetime >> 8) & 255;
+    buffer[11] = Channelcount & 255;
+    buffer[12] = (Channelcount >> 8) & 255;
+    buffer[13] = Startbyte;
+
+    hid_write(open_devices[pos].handle, buffer, 34);
+
+    open_devices[pos].status = THREAD_STATUS_RUN;
+
+    return 1;
+}
+DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
+    int pos;
+    unsigned char buffer[35];
+
+    pos = find_dev(Serial);
+    if (pos == -1) {
+        return 0;
+    }
+
+    open_devices[pos].status = THREAD_STATUS_PAUSE;
+
+    while (open_devices[pos].status != THREAD_STATUS_PAUSED) {
+        usleep(10000);
+    }
+
+    memset(buffer, 0, 34);
+    buffer[0] = 0;
+    buffer[1] = 18;
+    buffer[2] = 1;
+
+    hid_write(open_devices[pos].handle, buffer, 34);
+
+    open_devices[pos].status = THREAD_STATUS_RUN;
+
+    return 1;
+}
+DWORD RegisterInputChangeBlockNotification(THOSTINPUTCHANGEPROCBLOCK Proc) {
+    callback_func_block = Proc;
+    return 1;
+}
+DWORD UnregisterInputChangeBlockNotification(void) {
+    callback_func = NULL;
+    return 1;
+}
+
+/// And the Functions from usbdmxsi.dll also
+
+DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned char Mode) {
+    TSERIALLIST InterfaceList;
+
+    GetAllOpenedInterfaces(&InterfaceList);
+
+    if(memcmp(InterfaceList[0],"0000000000000000",16) != 0) {
+        return 1;
+    }
+
+    GetAllConnectedInterfaces(&InterfaceList);
+
+    if(memcmp(InterfaceList[0],"0000000000000000",16) == 0) {
+        return 0;
+    }
+    if(0 == OpenLink(InterfaceList[0], DMXOutArray, DMXInArray)) {
+        return 0;
+    }
+
+    if(0 == SetInterfaceMode(InterfaceList[0], Mode)) {
+        return 0;
+    }
+    return 1;
+}
+
+DWORD CloseInterface(void) {
+    TSERIALLIST InterfaceList;
+
+    GetAllOpenedInterfaces(&InterfaceList);
+
+    if(memcmp(InterfaceList[0],"0000000000000000",16) == 0) {
+        return 0;
+    }
+
+    if(0 == CloseLink(InterfaceList[0])) {
+        return 0;
+    }
+
+    return 1;
+}
