@@ -57,6 +57,7 @@ for i in xrange(150):
     table.attach(w, col, col+1, row+2, row+3)
     dmx_ins.append(w)
 
+
 class DMXInUpdater(threading.Thread):
 
     def __init__(self):
@@ -68,7 +69,7 @@ class DMXInUpdater(threading.Thread):
             time.sleep(0.1)
             gtk.gdk.threads_enter()
             try:
-                for i,w in enumerate(dmx_ins):
+                for i, w in enumerate(dmx_ins):
                     w.set_value(dmx.get_dmx(i))
             finally:
                 gtk.gdk.threads_leave()
@@ -76,4 +77,7 @@ class DMXInUpdater(threading.Thread):
 DMXInUpdater().start()
 
 main_win.show_all()
+
+main_win.connect("destroy", lambda a: gtk.main_quit())
+
 gtk.main()
