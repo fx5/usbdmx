@@ -10,6 +10,9 @@ To use the non-static-version "usbdmx_example" or "simple_example":
 $ LD_LIBRARY_PATH=. ./usbdmx_example
 $ LD_LIBRARY_PATH=. ./simple_example
 
+or try:
+$ python demo.py
+
 Copyright (c) 2011, Frank Sievertsen
 
 Based upon hidapi Copyright (c) 2010 Alan Ott.
