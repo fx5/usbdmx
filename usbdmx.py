@@ -69,7 +69,7 @@ class FX5Interface(object):
     def mode(self, mode):
         """ Set Mode """
         if _usbdmx.SetInterfaceMode(self.serial, mode) == 0:
-            raise IOError("Unable to open interface")
+            raise IOError("Unable to set mode")
 
     def set_dmx(self, num, val):
         """ Set DMX-Out Adress num to value val """
