@@ -408,7 +408,7 @@ DWORD RegisterInputChangeBlockNotification(THOSTINPUTCHANGEPROCBLOCK Proc) {
     return 1;
 }
 DWORD UnregisterInputChangeBlockNotification(void) {
-    callback_func = NULL;
+    callback_func_block = NULL;
     return 1;
 }
 
