@@ -7,7 +7,7 @@ COBJS=hid.o usbdmx.o
 CPPOBJS=
 OBJS=$(COBJS) $(CPPOBJS)
 CFLAGS+=-Wall -g -c -fpic -pthread
-LIBS=`pkg-config libudev --libs`
+LIBS=-pthread `pkg-config libudev --libs`
 
 usbdmx_example: usbdmx_example.cpp libusbdmx.so libusbdmx.a
 	g++ -L. -lusbdmx -Wall -o usbdmx_example usbdmx_example.cpp
