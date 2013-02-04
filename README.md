@@ -1,19 +1,27 @@
-usbdmx - Linux-Driver for usb-dmx-Interface from Digital Enlightment and FX5.
+usbdmx - Linux-Driver for USB DMX Interface from [FX5](http://www.fx5.de/)
+and [Digital Enlightenment](http://www.digital-englightenment.de).
 
-BSD-License. Should be more or less compatible with the
+BSD-License. API compatible with
 original Windows-Drivers usbdmx.dll and (!) usbdmxsi.dll
 
 To use the interface without root-privileges:
-# cp 50-usbdmx.rules /etc/udev/rules.d/
+```
+$ sudo cp 50-usbdmx.rules /etc/udev/rules.d/
+```
 
 To use the non-static-version "usbdmx_example" or "simple_example":
+```
 $ LD_LIBRARY_PATH=. ./usbdmx_example
 $ LD_LIBRARY_PATH=. ./simple_example
+```
 
 or try:
+```
 $ python demo.py
+```
 
-Copyright (c) 2011, Frank Sievertsen
+```
+Copyright (c) 2011-2013, Frank Sievertsen
 
 Based upon hidapi Copyright (c) 2010 Alan Ott.
 
@@ -40,3 +48,4 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+```
