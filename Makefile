@@ -1,5 +1,5 @@
 all:  usbdmx_example usbdmx_example_static simple_example simple_example_static libusbdmx.so
-	echo "" ; head -n 17 README.txt
+	echo "" ; head -n 17 README.md
 
 CC=gcc
 CXX=g++
