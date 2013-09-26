@@ -1,0 +1,5 @@
+CC=i586-mingw32msvc-gcc
+ID=32
+
+include windows/include-mingw-common.mk
+

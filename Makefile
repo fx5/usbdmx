@@ -1,6 +1,10 @@
 all:  usbdmx_example usbdmx_example_static simple_example simple_example_static libusbdmx.so
 	echo "" ; head -n 17 README.md
 
+windows-all:
+	make -f Makefile-mingw32
+	make -f Makefile-mingw64
+
 CC=gcc
 CXX=g++
 COBJS=linux/hid.o usbdmx.o
@@ -35,5 +39,7 @@ $(CPPOBJS): %.o: %.cpp
 
 clean:
 	rm -f $(OBJS) usbdmx_example usbdmx_example_static libusbdmx.so libusbdmx.a
+	make -f Makefile-mingw32 clean
+	make -f Makefile-mingw64 clean
 
 .PHONY: clean

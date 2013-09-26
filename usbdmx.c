@@ -106,7 +106,7 @@ void set_dev(int pos, char * serial) {
     memcpy(open_devices[pos].serial, serial, 16);
 }
 
-void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
+DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
     struct hid_device_info *devs, *cur_dev;
     int pos = 0;
 
@@ -127,7 +127,7 @@ void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
     wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
 }
 
-DWORD GetDeviceVersion(TSERIAL Serial) {
+DLL DWORD GetDeviceVersion(TSERIAL Serial) {
     struct hid_device_info *devs, *cur_dev;
     DWORD res = 0;
 
@@ -155,7 +155,7 @@ DWORD GetDeviceVersion(TSERIAL Serial) {
     return res;
 }
 
-void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
+DLL void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
     int pos;
     int i;
     pos = 0;
@@ -168,7 +168,7 @@ void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
     wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
 }
 
-DWORD SetInterfaceMode (TSERIAL Serial, unsigned char Mode) {
+DLL DWORD SetInterfaceMode (TSERIAL Serial, unsigned char Mode) {
     int pos;
 
     pos = find_dev(Serial);
@@ -249,7 +249,7 @@ void *read_write_thread(void *pointer)
     return NULL;
 }
 
-DWORD OpenLink(TSERIAL Serial, TDMXArray *DMXOutArray, TDMXArray *DMXInArray) {
+DLL DWORD OpenLink(TSERIAL Serial, TDMXArray *DMXOutArray, TDMXArray *DMXInArray) {
     hid_device *handle;
     int pos;
 
@@ -286,7 +286,7 @@ DWORD OpenLink(TSERIAL Serial, TDMXArray *DMXOutArray, TDMXArray *DMXInArray) {
     return 1;
 }
 
-DWORD CloseLink (TSERIAL Serial) {
+DLL DWORD CloseLink (TSERIAL Serial) {
     int pos;
 
     pos = find_dev(Serial);
@@ -302,7 +302,7 @@ DWORD CloseLink (TSERIAL Serial) {
     return 1;
 }
 
-DWORD CloseAllLinks (void) {
+DLL DWORD CloseAllLinks (void) {
     int i;
     int result = 1;
     for(i=0; i<MAX_OPENED; i++) {
@@ -315,27 +315,27 @@ DWORD CloseAllLinks (void) {
     return result;
 }
 
-DWORD RegisterInterfaceChangeNotification (THOSTDEVICECHANGEPROC Proc) {
+DLL DWORD RegisterInterfaceChangeNotification (THOSTDEVICECHANGEPROC Proc) {
     // FIXME
     return 1;
 }
 
-DWORD UnregisterInterfaceChangeNotification (void) {
+DLL DWORD UnregisterInterfaceChangeNotification (void) {
     // FIXME too
     return 1;
 }
 
-DWORD RegisterInputChangeNotification (THOSTDEVICECHANGEPROC Proc) {
+DLL DWORD RegisterInputChangeNotification (THOSTDEVICECHANGEPROC Proc) {
     callback_func = Proc;
     return 1;
 }
 
-DWORD UnregisterInputChangeNotification (void) {
+DLL DWORD UnregisterInputChangeNotification (void) {
     callback_func = NULL;
     return 1;
 }
 
-DWORD SetInterfaceAdvTxConfig(
+DLL DWORD SetInterfaceAdvTxConfig(
     TSERIAL Serial, unsigned char Control, uint16_t Breaktime, uint16_t Marktime,
     uint16_t Interbytetime, uint16_t Interframetime, uint16_t Channelcount, uint16_t Startbyte
 ) {
@@ -377,7 +377,7 @@ DWORD SetInterfaceAdvTxConfig(
 
     return 1;
 }
-DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
+DLL DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
     int pos;
     unsigned char buffer[35];
 
@@ -403,18 +403,18 @@ DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
 
     return 1;
 }
-DWORD RegisterInputChangeBlockNotification(THOSTINPUTCHANGEPROCBLOCK Proc) {
+DLL DWORD RegisterInputChangeBlockNotification(THOSTINPUTCHANGEPROCBLOCK Proc) {
     callback_func_block = Proc;
     return 1;
 }
-DWORD UnregisterInputChangeBlockNotification(void) {
+DLL DWORD UnregisterInputChangeBlockNotification(void) {
     callback_func_block = NULL;
     return 1;
 }
 
 /// And the Functions from usbdmxsi.dll also
 
-DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned char Mode) {
+DLL DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned char Mode) {
     TSERIALLIST InterfaceList;
 
     GetAllOpenedInterfaces(&InterfaceList);
@@ -438,7 +438,7 @@ DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned char
     return 1;
 }
 
-DWORD CloseInterface(void) {
+DLL DWORD CloseInterface(void) {
     TSERIALLIST InterfaceList;
 
     GetAllOpenedInterfaces(&InterfaceList);

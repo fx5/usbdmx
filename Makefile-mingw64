@@ -1,0 +1,5 @@
+CC=i686-w64-mingw32-gcc
+ID=64
+
+include windows/include-mingw-common.mk
+
