@@ -3,7 +3,7 @@ all:  usbdmx_example usbdmx_example_static simple_example simple_example_static 
 
 CC=gcc
 CXX=g++
-COBJS=hid.o usbdmx.o
+COBJS=linux/hid.o usbdmx.o
 CPPOBJS=
 OBJS=$(COBJS) $(CPPOBJS)
 CFLAGS+=-Wall -g -c -fpic -pthread
