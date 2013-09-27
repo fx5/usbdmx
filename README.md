@@ -1,4 +1,4 @@
-usbdmx - Linux-Driver for [FX5 USB DMX Interface](http://www.fx5.de/)
+usbdmx - Linux/Mac/Windows-Driver for [FX5 USB DMX Interface](http://www.fx5.de/)
 and [Digital Enlightenment](http://www.digital-enlightenment.de).
 
 BSD-License. API compatible with

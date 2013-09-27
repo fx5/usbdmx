@@ -13,6 +13,12 @@ OBJS=$(COBJS) $(CPPOBJS)
 CFLAGS+=-Wall -g -c -fpic -pthread
 LIBS=-pthread `pkg-config libudev --libs`
 
+ifeq ($(shell uname -s),Darwin)
+    PLATFORM=mac
+    COBJS=$(PLATFORM)/hid.o usbdmx.o
+    LIBS=-pthread -framework IOKit -framework CoreFoundation
+endif
+
 usbdmx_example: usbdmx_example.cpp libusbdmx.so libusbdmx.a
 	g++ -L. -Wall -o usbdmx_example usbdmx_example.cpp -lusbdmx
 
