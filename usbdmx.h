@@ -4,19 +4,22 @@ extern "C" {
 
 #include <stdint.h>
 
-// types for library functions
-typedef unsigned char TDMXArray[512];
-typedef char TSERIAL[16];
-typedef TSERIAL TSERIALLIST[32];
-typedef void (THOSTDEVICECHANGEPROC) (void);
-typedef void (THOSTINPUTCHANGEPROCBLOCK) (unsigned char blocknumber);
-
 #define DWORD uint32_t
 #ifdef WIN32
     #define DLL __declspec(dllexport)
 #else
     #define DLL
+    #define __stdcall
 #endif
+
+
+// types for library functions
+typedef unsigned char TDMXArray[512];
+typedef char TSERIAL[16];
+typedef TSERIAL TSERIALLIST[32];
+typedef __stdcall void (THOSTDEVICECHANGEPROC) (void);
+typedef __stdcall void (THOSTINPUTCHANGEPROCBLOCK) (unsigned char blocknumber);
+
 
 // define library functions
 DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList);

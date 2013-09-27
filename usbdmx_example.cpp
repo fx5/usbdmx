@@ -6,15 +6,15 @@ extern "C" {
 #include <string.h>
 #include <stdlib.h>
 
-void InterfaceChange(void) {
+void __stdcall InterfaceChange(void) {
     printf("Interface cnonfiguration has changed\n");
 }
 
-void InputChange(void) {
+void __stdcall InputChange(void) {
     printf("Input has changed\n");
 }
 
-void InputChangeBlock(unsigned char block_number) {
+void __stdcall InputChangeBlock(unsigned char block_number) {
     // printf("Block %d changed\n", block_number);
 }
 
