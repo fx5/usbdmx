@@ -129,7 +129,7 @@ DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
 
 DLL DWORD GetDeviceVersion(TSERIAL Serial) {
     struct hid_device_info *devs, *cur_dev;
-    DWORD res = 0;
+    DWORD res = 0x100;
 
     char serial_test[17];
 
