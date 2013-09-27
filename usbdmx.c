@@ -106,10 +106,11 @@ void set_dev(int pos, char * serial) {
     memcpy(open_devices[pos].serial, serial, 16);
 }
 
-DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
+USB_DMX_DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
     struct hid_device_info *devs, *cur_dev;
     int pos = 0;
 
+    memset(SerialList, '0', sizeof(TSERIALLIST));
     devs = hid_enumerate(0x0, 0x0);
     cur_dev = devs;
 
@@ -124,10 +125,9 @@ DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
         cur_dev = cur_dev->next;
     }
     hid_free_enumeration(devs);
-    wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
 }
 
-DLL DWORD GetDeviceVersion(TSERIAL Serial) {
+USB_DMX_DLL DWORD GetDeviceVersion(TSERIAL Serial) {
     struct hid_device_info *devs, *cur_dev;
     DWORD res = 0x100;
 
@@ -155,10 +155,11 @@ DLL DWORD GetDeviceVersion(TSERIAL Serial) {
     return res;
 }
 
-DLL void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
+USB_DMX_DLL void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
     int pos;
     int i;
     pos = 0;
+    memset(SerialList, '0', sizeof(TSERIALLIST));
     for(i=0; i<MAX_OPENED; i++) {
         if(memcmp(open_devices[i].serial,NO_DEV,16)!=0) {
             memcpy(SerialList[0][pos], open_devices[i].serial, 16);
@@ -168,7 +169,7 @@ DLL void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
     wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
 }
 
-DLL DWORD SetInterfaceMode (TSERIAL Serial, unsigned char Mode) {
+USB_DMX_DLL DWORD SetInterfaceMode (TSERIAL Serial, unsigned char Mode) {
     int pos;
 
     pos = find_dev(Serial);
@@ -249,7 +250,7 @@ void *read_write_thread(void *pointer)
     return NULL;
 }
 
-DLL DWORD OpenLink(TSERIAL Serial, TDMXArray *DMXOutArray, TDMXArray *DMXInArray) {
+USB_DMX_DLL DWORD OpenLink(TSERIAL Serial, TDMXArray *DMXOutArray, TDMXArray *DMXInArray) {
     hid_device *handle;
     int pos;
 
@@ -286,7 +287,7 @@ DLL DWORD OpenLink(TSERIAL Serial, TDMXArray *DMXOutArray, TDMXArray *DMXInArray
     return 1;
 }
 
-DLL DWORD CloseLink (TSERIAL Serial) {
+USB_DMX_DLL DWORD CloseLink (TSERIAL Serial) {
     int pos;
 
     pos = find_dev(Serial);
@@ -302,7 +303,7 @@ DLL DWORD CloseLink (TSERIAL Serial) {
     return 1;
 }
 
-DLL DWORD CloseAllLinks (void) {
+USB_DMX_DLL DWORD CloseAllLinks (void) {
     int i;
     int result = 1;
     for(i=0; i<MAX_OPENED; i++) {
@@ -315,27 +316,27 @@ DLL DWORD CloseAllLinks (void) {
     return result;
 }
 
-DLL DWORD RegisterInterfaceChangeNotification (THOSTDEVICECHANGEPROC Proc) {
+USB_DMX_DLL DWORD RegisterInterfaceChangeNotification (THOSTDEVICECHANGEPROC Proc) {
     // FIXME
     return 1;
 }
 
-DLL DWORD UnregisterInterfaceChangeNotification (void) {
+USB_DMX_DLL DWORD UnregisterInterfaceChangeNotification (void) {
     // FIXME too
     return 1;
 }
 
-DLL DWORD RegisterInputChangeNotification (THOSTDEVICECHANGEPROC Proc) {
+USB_DMX_DLL DWORD RegisterInputChangeNotification (THOSTDEVICECHANGEPROC Proc) {
     callback_func = Proc;
     return 1;
 }
 
-DLL DWORD UnregisterInputChangeNotification (void) {
+USB_DMX_DLL DWORD UnregisterInputChangeNotification (void) {
     callback_func = NULL;
     return 1;
 }
 
-DLL DWORD SetInterfaceAdvTxConfig(
+USB_DMX_DLL DWORD SetInterfaceAdvTxConfig(
     TSERIAL Serial, unsigned char Control, uint16_t Breaktime, uint16_t Marktime,
     uint16_t Interbytetime, uint16_t Interframetime, uint16_t Channelcount, uint16_t Startbyte
 ) {
@@ -377,7 +378,7 @@ DLL DWORD SetInterfaceAdvTxConfig(
 
     return 1;
 }
-DLL DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
+USB_DMX_DLL DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
     int pos;
     unsigned char buffer[35];
 
@@ -403,18 +404,18 @@ DLL DWORD StoreInterfaceAdvTxConfig(TSERIAL Serial) {
 
     return 1;
 }
-DLL DWORD RegisterInputChangeBlockNotification(THOSTINPUTCHANGEPROCBLOCK Proc) {
+USB_DMX_DLL DWORD RegisterInputChangeBlockNotification(THOSTINPUTCHANGEPROCBLOCK Proc) {
     callback_func_block = Proc;
     return 1;
 }
-DLL DWORD UnregisterInputChangeBlockNotification(void) {
+USB_DMX_DLL DWORD UnregisterInputChangeBlockNotification(void) {
     callback_func_block = NULL;
     return 1;
 }
 
-/// And the Functions from usbdmxsi.dll also
+/// And the Functions from usbdmxsi.USB_DMX_DLL also
 
-DLL DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned char Mode) {
+USB_DMX_DLL DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned char Mode) {
     TSERIALLIST InterfaceList;
 
     GetAllOpenedInterfaces(&InterfaceList);
@@ -438,7 +439,7 @@ DLL DWORD OpenInterface(TDMXArray *DMXOutArray, TDMXArray *DMXInArray, unsigned 
     return 1;
 }
 
-DLL DWORD CloseInterface(void) {
+USB_DMX_DLL DWORD CloseInterface(void) {
     TSERIALLIST InterfaceList;
 
     GetAllOpenedInterfaces(&InterfaceList);

@@ -13,7 +13,7 @@ usbdmx${ID}.o: usbdmx.c
 	${CC} -Wall -I windows/ -c usbdmx.c -o usbdmx${ID}.o
 
 usbdmx${ID}.dll: usbdmx.c windows/hid${ID}.o windows/pthread${ID}.o
-	${CC} -shared -s -I windows/ usbdmx.c windows/pthread${ID}.o windows/hid${ID}.o -l setupapi -o usbdmx${ID}.dll
+	${CC} -Wl,--kill-at -shared -s -I windows/ usbdmx.c windows/pthread${ID}.o windows/hid${ID}.o -l setupapi -o usbdmx${ID}.dll
 
 usbdmx_example${ID}.exe: usbdmx${ID}.o windows/hid${ID}.o windows/pthread${ID}.o windows/sleep.cpp windows/usbdmx_example.cpp
 	${CC} usbdmx${ID}.o windows/pthread${ID}.o windows/hid${ID}.o windows/sleep.cpp windows/usbdmx_example.cpp -l setupapi -o usbdmx_example${ID}.exe
