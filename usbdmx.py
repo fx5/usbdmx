@@ -29,7 +29,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 import ctypes
 
-_usbdmx = ctypes.cdll.LoadLibrary("./libusbdmx.so")
+try:
+    _usbdmx = ctypes.cdll.LoadLibrary("./libusbdmx.so")
+except OSError:
+    _usbdmx = ctypes.cdll.LoadLibrary("./libusbdmx.dylib")
 
 
 def scan():

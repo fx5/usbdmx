@@ -1,8 +1,2 @@
-*.a
-*.so
-*.o
+*~
 *.pyc
-usbdmx_example
-usbdmx_example_static
-simple_example
-simple_example_static
