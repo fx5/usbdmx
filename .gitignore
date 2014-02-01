@@ -1,2 +1,9 @@
 *~
 *.pyc
+*.a
+*.o
+*.so
+simple_example
+simple_example_static
+usbdmx_example
+usbdmx_example_static
