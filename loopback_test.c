@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
 
         if (  (dmx_in[0] != set_value) ||
               (dmx_in[1] != set_value) ||
-              (dmx_out[2] != set_value)) {
+              (dmx_in[2] != set_value)) {
             printf("FAIL %d\n", count);
         } else {
             count ++;
