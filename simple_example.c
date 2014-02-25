@@ -47,7 +47,7 @@ int main(int argc, char ** argv) {
 
     printf("Waiting one second\n");
 
-    sleep(1);  // Wait 1 Second
+    usleep(200000);  // Wait 200 ms
 
     printf("Received:\n");
 

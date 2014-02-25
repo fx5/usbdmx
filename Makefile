@@ -17,11 +17,11 @@ else
     LD_SHARED=-shared
 endif
 
-all: usbdmx_example usbdmx_example_static simple_example simple_example_static $(LIB_NAMES)
+all: usbdmx_example usbdmx_example_static simple_example simple_example_static loopback_test $(LIB_NAMES)
 	echo "" ; head -n 17 README.md
 
 clean:
-	rm -f $(OBJS) usbdmx_example usbdmx_example_static libusbdmx.a simple_example simple_example_static $(LIB_NAMES)
+	rm -f $(OBJS) usbdmx_example usbdmx_example_static libusbdmx.a simple_example simple_example_static loopback_test $(LIB_NAMES)
 	make -f Makefile-mingw32 clean
 	make -f Makefile-mingw64 clean
 
@@ -41,6 +41,9 @@ simple_example: simple_example.c libusbdmx.a $(LIB_NAMES)
 
 simple_example_static: simple_example.c libusbdmx.a $(LIB_NAMES)
 	gcc $(OBJS) $(LIBS) simple_example.c -o simple_example_static
+
+loopback_test: loopback_test.c libusbdmx.a $(LIB_NAMES)
+	gcc $(OBJS) $(LIBS) loopback_test.c -o loopback_test
 
 libusbdmx.so: $(OBJS)
 	$(CC) $(OBJS) $(LD_SHARED) -s -o libusbdmx.so $(LIBS)

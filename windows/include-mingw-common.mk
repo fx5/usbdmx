@@ -1,7 +1,7 @@
 
-all: usbdmx${ID}.dll usbdmx_example${ID}.exe
+all: usbdmx${ID}.dll usbdmx_example${ID}.exe loopback_test${ID}.exe
 clean:
-	rm -f usbdmx${ID}.dll windows/hid${ID}.o usbdmx${ID}.o windows/pthread${ID}.o usbdmx_example${ID}.exe
+	rm -f usbdmx${ID}.dll windows/hid${ID}.o usbdmx${ID}.o windows/pthread${ID}.o usbdmx_example${ID}.exe loopback_test${ID}.exe
 
 windows/hid${ID}.o: windows/hid.c
 	${CC} -c windows/hid.c -o windows/hid${ID}.o
@@ -15,5 +15,8 @@ usbdmx${ID}.o: usbdmx.c
 usbdmx${ID}.dll: usbdmx.c windows/hid${ID}.o windows/pthread${ID}.o
 	${CC} -Wl,--kill-at -shared -s -I windows/ usbdmx.c windows/pthread${ID}.o windows/hid${ID}.o -l setupapi -o usbdmx${ID}.dll
 
-usbdmx_example${ID}.exe: usbdmx${ID}.o windows/hid${ID}.o windows/pthread${ID}.o windows/sleep.cpp windows/usbdmx_example.cpp
+usbdmx_example${ID}.exe: usbdmx${ID}.o windows/hid${ID}.o windows/pthread${ID}.o windows/sleep.cpp windows/usbdmx_example.cpp usbdmx_example.cpp
 	${CC} usbdmx${ID}.o windows/pthread${ID}.o windows/hid${ID}.o windows/sleep.cpp windows/usbdmx_example.cpp -l setupapi -o usbdmx_example${ID}.exe
+
+loopback_test${ID}.exe: usbdmx${ID}.o windows/hid${ID}.o windows/pthread${ID}.o windows/sleep.cpp windows/loopback_test.c loopback_test.c
+	${CC} usbdmx${ID}.o windows/pthread${ID}.o windows/hid${ID}.o windows/sleep.cpp windows/loopback_test.c -l setupapi -o loopback_test${ID}.exe
