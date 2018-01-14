@@ -66,7 +66,7 @@ typedef struct  {
 void wserial_to_serial(const wchar_t * s1, char * s2) {
     int i;
     for(i=0;i<16;i++) {
-        s2[i] = s1[i];
+        s2[i] = (char)s1[i];
     }
 }
 void wserial_from_serial(wchar_t * s1, const char * s2) {
@@ -370,7 +370,7 @@ USB_DMX_DLL DWORD SetInterfaceAdvTxConfig(
     buffer[10] = (Interframetime >> 8) & 255;
     buffer[11] = Channelcount & 255;
     buffer[12] = (Channelcount >> 8) & 255;
-    buffer[13] = Startbyte;
+    buffer[13] = (unsigned char)Startbyte;
 
     hid_write(open_devices[pos].handle, buffer, 34);
 
