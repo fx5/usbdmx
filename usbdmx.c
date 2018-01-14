@@ -33,8 +33,14 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <sys/types.h>
 #include <string.h>
 #include <pthread.h>
-#include <unistd.h>
 #include <signal.h>
+
+#ifdef _MSC_VER
+#include <usleep.h>
+#else
+#include <unistd.h>
+#endif // _MSC_VER
+
 
 #define MAX_OPENED 32
 
