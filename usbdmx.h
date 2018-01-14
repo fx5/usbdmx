@@ -8,7 +8,7 @@ extern "C" {
 #include <stdint.h>
 
 #define DWORD uint32_t
-#ifdef WIN32
+#ifdef _WIN32
     #define USB_DMX_DLL __declspec(dllexport) __stdcall
     #define USB_DMX_CALLBACK __stdcall
 #else
