@@ -11,3 +11,6 @@ simple_example_static
 usbdmx_example
 usbdmx_example_static
 loopback_test
+
+# msvc project temporary files
+/tmp/
