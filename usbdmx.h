@@ -1,3 +1,6 @@
+#ifndef USBDMX_API_H
+#define USBDMX_API_H
+
 #ifdef __cplusplus
 extern "C" { 
 #endif
@@ -73,3 +76,4 @@ USB_DMX_DLL DWORD CloseInterface(void);
 }
 #endif
 
+#endif // USBDMX_API_H

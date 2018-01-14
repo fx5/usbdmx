@@ -1,4 +1,5 @@
 #ifndef USBDMX_USLEEP_H
+#define USBDMX_USLEEP_H
 
 #ifdef __cplusplus
 extern "C" {
