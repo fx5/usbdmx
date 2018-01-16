@@ -65,13 +65,13 @@ typedef struct  {
 
 void wserial_to_serial(const wchar_t * s1, char * s2) {
     int i;
-    for(i=0;i<16;i++) {
+    for(i=0;i<16;++i) {
         s2[i] = s1[i];
     }
 }
 void wserial_from_serial(wchar_t * s1, const char * s2) {
     int i;
-    for(i=0;i<16;i++) {
+    for(i=0;i<16;++i) {
         s1[i] = s2[i];
     }
     s1[i] = 0;
@@ -95,7 +95,7 @@ device_t open_devices[MAX_OPENED];
 
 int find_dev(TSERIAL serial) {
     int i;
-    for(i=0; i<MAX_OPENED; i++) {
+    for(i=0; i<MAX_OPENED; ++i) {
         if(memcmp(serial, open_devices[i].serial, 16) == 0) {
             return i;
         }
@@ -120,7 +120,7 @@ USB_DMX_DLL void GetAllConnectedInterfaces(TSERIALLIST* SerialList) {
             ((cur_dev->vendor_id == DMX_INTERFACE_VENDOR_ID_2)&&(cur_dev->product_id == DMX_INTERFACE_PRODUCT_ID_2))
         ) {
             wserial_to_serial(cur_dev->serial_number, SerialList[0][pos]);
-            pos ++;
+            ++pos;
         }
         cur_dev = cur_dev->next;
     }
@@ -160,10 +160,10 @@ USB_DMX_DLL void GetAllOpenedInterfaces(TSERIALLIST* SerialList) {
     int i;
     pos = 0;
     memset(SerialList, '0', sizeof(TSERIALLIST));
-    for(i=0; i<MAX_OPENED; i++) {
+    for(i=0; i<MAX_OPENED; ++i) {
         if(memcmp(open_devices[i].serial,NO_DEV,16)!=0) {
             memcpy(SerialList[0][pos], open_devices[i].serial, 16);
-            pos ++;
+            ++pos;
         }
     }
     wserial_to_serial(L"0000000000000000", SerialList[0][pos]);
@@ -208,7 +208,7 @@ void *read_write_thread(void *pointer)
             set_mode(device->handle, device->old_mode);
         }
         if(device->dmx_out) {
-            for(i=0; i<16; i++) {
+            for(i=0; i<16; ++i) {
                 if(first_time || (memcmp(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32) != 0)) {
                     memcpy(device->dmx_cmp + (i * 32), (* device->dmx_out) + (i * 32), 32);
                     memcpy(buffer + 2, device->dmx_cmp + (i * 32), 32);
@@ -306,7 +306,7 @@ USB_DMX_DLL DWORD CloseLink (TSERIAL Serial) {
 USB_DMX_DLL DWORD CloseAllLinks (void) {
     int i;
     int result = 1;
-    for(i=0; i<MAX_OPENED; i++) {
+    for(i=0; i<MAX_OPENED; ++i) {
         if(memcmp(open_devices[i].serial, NO_DEV, 16) != 0) {
             if(0 == CloseLink(open_devices[i].serial)) {
                 result = 0;
