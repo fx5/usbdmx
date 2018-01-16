@@ -18,11 +18,20 @@ extern "C" {
 #endif
     #define USB_DMX_API_CALLING_CONVENTION        __stdcall
     #define USB_DMX_CALLBACK_CALLING_CONVENTION   __stdcall
+    // compatibility with legacy callback calling convention
+    // The macro USB_DMX_CALLBACK has been renamed to USB_DMX_CALLBACK_CALLING_CONVENTION
+    // in order to make clear that it's only the calling convention not possibly any other
+    // e.g. __declspec attribute. But that might break backwards compatibility of existing
+    // projects. So the old macro is here for legacy reasons. It should be marked as
+    // deprecated in future releases and finally be removed.
+    #define USB_DMX_CALLBACK USB_DMX_CALLBACK_CALLING_CONVENTION
 #else
     // not windows, remove all the dll magic
     #define USB_DMX_DLL
     #define USB_DMX_API_CALLING_CONVENTION
     #define USB_DMX_CALLBACK_CALLING_CONVENTION
+    // compatibility with legacy callback calling convention, see above comment
+    #define USB_DMX_CALLBACK
 #endif
 
 
